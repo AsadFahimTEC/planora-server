@@ -1,6 +1,6 @@
 import { adminRouter } from './modules/admin/admin.routes';
 import { reviewRouter } from './modules/review/review.routes';
-import { bookingRouter } from './modules/booking/booking.routes';
+import { bookingRouter } from './modules/events/events.routes';
 import { categoryRouter } from './modules/category/category.routes';
 import { tutorRouter } from './modules/tutor/tutor.routes';
 import { authRouter } from './modules/auth/auth.routes';
@@ -34,7 +34,7 @@ app.all("/api/auth/*splat", toNodeHandler(auth))
 app.use("/api/auth", authRouter);
 app.use("/api/tutors", tutorRouter);
 app.use("/api/admin", categoryRouter);
-app.use("/api/bookings", bookingRouter);
+app.use("/api/events", bookingRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/admin", adminRouter);
 

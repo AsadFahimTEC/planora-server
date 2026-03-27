@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { bookingService } from "./booking.service";
+import { bookingService } from "./events.service";
 import { prisma } from "../../lib/prisma";
 
 
@@ -13,13 +13,13 @@ const createBooking = async (req: Request, res: Response) => {
 
         res.status(200).json({
             success: true,
-            message: "Booking created successfully",
+            message: "Events created successfully",
             data: booking,
         })
     } catch (error) {
         res.status(400).json({
             success: false,
-            message: "Failed to create booking",
+            message: "Failed to create an event!",
         });
     }
 };
@@ -43,7 +43,7 @@ const getBookingDetails = async (req: Request, res: Response) => {
     if (!booking) {
         return res.status(404).json({
             success: false,
-            message: "Booking not found",
+            message: "Events not found",
         });
     }
 
@@ -55,7 +55,7 @@ const getAllTutors = async (req: Request, res: Response) => {
 
     res.status(200).json({
         success: true,
-        message: "All Tutors retrieved successfully",
+        message: "All Events retrieved successfully",
         data: tutors,
     });
 };
@@ -68,13 +68,13 @@ const updateTutorProfile = async (req: Request, res: Response) => {
 
         res.status(200).json({
             success: true,
-            message: "Tutor profile updated successfully",
+            message: "Events updated successfully",
             data: profile,
         });
     } catch (error: any) {
         res.status(400).json({
             success: false,
-            message: error.message || "Failed to update tutor profile",
+            message: error.message || "Failed to update event!",
         });
     }
 };

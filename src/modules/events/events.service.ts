@@ -111,13 +111,13 @@ const cancelBooking = async (req: Request<{ id: string }>, res: Response) => {
     if (!booking) {
       return res.status(404).json({
         success: false,
-        message: "Booking not found or not owned by you",
+        message: "Events not found or not owned by you",
       });
     }
 
     res.status(200).json({
       success: true,
-      message: "Booking cancelled successfully",
+      message: "Events cancelled successfully",
       data: booking,
     });
   } catch (err: any) {
@@ -125,7 +125,7 @@ const cancelBooking = async (req: Request<{ id: string }>, res: Response) => {
 
     res.status(500).json({
       success: false,
-      message: "Failed to cancel booking",
+      message: "Failed to cancel event",
     });
   }
 };
