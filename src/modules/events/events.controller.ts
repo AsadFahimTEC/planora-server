@@ -1,114 +1,110 @@
 import { Request, Response } from "express";
-import { bookingService } from "./events.service";
+import {  eventService } from "./events.service";
 import { prisma } from "../../lib/prisma";
 
 
-const createBooking = async (req: Request, res: Response) => {
-    try {
-        // const userId = req.user!.id;
-        const booking = await bookingService.createBooking(
-            req.user!.id,
-            req.body.tutorId
-        );
+const createEvent = async (req: Request, res: Response) => {
+  try {
 
-        res.status(200).json({
-            success: true,
-            message: "Events created successfully",
-            data: booking,
-        })
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: "Failed to create an event!",
-        });
-    }
-};
+    const event = await eventService.createEvent(req.body);
 
-const getMyBookings = async (req: Request, res: Response) => {
-    // const userId = req.user!.id;
-    const bookings = await bookingService.getMyBookings(req.user!.id);
-
-    res.status(200).json({
-        success: true,
-        data: bookings,
+    res.status(201).json({
+      success: true,
+      message: "Event created successfully",
+      data: event,
     });
-};
 
-const getBookingDetails = async (req: Request, res: Response) => {
-    const booking = await bookingService.getBookingById(
-        req.params.id as string,
-        req.user!.id
-    );
+  } catch (error: any) {
 
-    if (!booking) {
-        return res.status(404).json({
-            success: false,
-            message: "Events not found",
-        });
-    }
+    console.error("Create Event Error:", error);
 
-    res.json({ success: true, data: booking });
-};
-
-const getAllTutors = async (req: Request, res: Response) => {
-    const tutors = await bookingService.getAllTutors();
-
-    res.status(200).json({
-        success: true,
-        message: "All Events retrieved successfully",
-        data: tutors,
+    res.status(400).json({
+      success: false,
+      message: error.message || "Failed to create an event!",
     });
-};
-
-const updateTutorProfile = async (req: Request, res: Response) => {
-    try {
-        const userId = req.user!.id;
-
-        const profile = await bookingService.updateProfile(userId, req.body);
-
-        res.status(200).json({
-            success: true,
-            message: "Events updated successfully",
-            data: profile,
-        });
-    } catch (error: any) {
-        res.status(400).json({
-            success: false,
-            message: error.message || "Failed to update event!",
-        });
-    }
-};
-
-const cancelBooking = async (bookingId: string, studentId: string) => {
-  // 1️⃣ Find booking
-  const booking = await prisma.booking.findFirst({
-    where: {
-      id: bookingId,
-      studentId,
-    },
-  });
-
-  if (!booking) return null;
-
-  // 2️⃣ If already cancelled, return it
-  if (booking.status === "CANCELLED") {
-    return booking;
   }
-
-  // 3️⃣ Update booking status
-  const updatedBooking = await prisma.booking.update({
-    where: { id: bookingId },
-    data: { status: "CANCELLED" },
-  });
-
-  return updatedBooking;
 };
 
-export const bookingController = {
-    createBooking,
-    getMyBookings,
-    getBookingDetails,
-    getAllTutors,
-    updateTutorProfile,
-    cancelBooking
+// const getMyBookings = async (req: Request, res: Response) => {
+//     // const userId = req.user!.id;
+//     const bookings = await bookingService.getMyBookings(req.user!.id);
+
+//     res.status(200).json({
+//         success: true,
+//         data: bookings,
+//     });
+// };
+
+// const getBookingDetails = async (req: Request, res: Response) => {
+//     const booking = await bookingService.getBookingById(
+//         req.params.id as string,
+//         req.user!.id
+//     );
+
+//     if (!booking) {
+//         return res.status(404).json({
+//             success: false,
+//             message: "Events not found",
+//         });
+//     }
+
+//     res.json({ success: true, data: booking });
+// };
+
+// const getAllTutors = async (req: Request, res: Response) => {
+//     const tutors = await bookingService.getAllTutors();
+
+//     res.status(200).json({
+//         success: true,
+//         message: "All Events retrieved successfully",
+//         data: tutors,
+//     });
+// };
+
+// const updateTutorProfile = async (req: Request, res: Response) => {
+//     try {
+//         const userId = req.user!.id;
+
+//         const profile = await bookingService.updateProfile(userId, req.body);
+
+//         res.status(200).json({
+//             success: true,
+//             message: "Events updated successfully",
+//             data: profile,
+//         });
+//     } catch (error: any) {
+//         res.status(400).json({
+//             success: false,
+//             message: error.message || "Failed to update event!",
+//         });
+//     }
+// };
+
+// const cancelBooking = async (bookingId: string, studentId: string) => {
+//   // 1️⃣ Find booking
+//   const booking = await prisma.booking.findFirst({
+//     where: {
+//       id: bookingId,
+//       studentId,
+//     },
+//   });
+
+//   if (!booking) return null;
+
+//   // 2️⃣ If already cancelled, return it
+//   if (booking.status === "CANCELLED") {
+//     return booking;
+//   }
+
+//   // 3️⃣ Update booking status
+//   const updatedBooking = await prisma.booking.update({
+//     where: { id: bookingId },
+//     data: { status: "CANCELLED" },
+//   });
+
+//   return updatedBooking;
+// };
+
+export const eventController = {
+    createEvent,
 }

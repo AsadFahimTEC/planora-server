@@ -1,22 +1,23 @@
 import express, { Router } from "express";
 import  auth, { UserRole } from '../../middlewares/auth';
-import { bookingController } from "./events.controller";
+
+import { eventController } from "./events.controller";
 
 const router = express.Router();
 
 // get the private routes
 
-router.get("/", auth(UserRole.USER), bookingController.getMyBookings);
+// router.get("/", auth(UserRole.USER), eventController.getMyEvents);
 
-router.get("/:id", auth(UserRole.USER), bookingController.getBookingDetails);
+// router.get("/:id", auth(UserRole.USER), eventController.getEventDetails);
 
-router.get("/", auth(UserRole.USER), bookingController.getAllTutors);
+// router.get("/", auth(UserRole.USER), eventController.getAllEvents);
 
-router.post("/", auth(UserRole.USER), bookingController.createBooking);
+router.post("/", auth(UserRole.USER), eventController.createEvent);
 
-router.put("/profiles", auth(UserRole.USER), bookingController.updateTutorProfile);
+// router.put("/profiles", auth(UserRole.USER), eventController.updateEventProfile);
 
-router.patch("/:id", auth(UserRole.USER), bookingController.cancelBooking);
+// router.patch("/:id", auth(UserRole.USER), eventController.cancelEvent);
 
 
 export const bookingRouter: Router = router;
