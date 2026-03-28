@@ -4,6 +4,6 @@ import { reviewController } from "./review.controller";
 
 const router = express.Router();
 
-router.post("/", auth(UserRole.STUDENT), reviewController.createReview);
+router.post("/", auth(UserRole.USER), reviewController.createReview);
 
 export const reviewRouter: Router = router;
