@@ -4,7 +4,7 @@ import  auth, { UserRole } from '../../middlewares/auth';
 
 const router = express.Router();
 
-router.get("/categories", auth(UserRole.ADMIN), async(req, res) => {
+router.get("/categories", auth(UserRole.USER), async(req, res) => {
     const categories = await prisma.category.findMany();
     res.json({
         success: true,

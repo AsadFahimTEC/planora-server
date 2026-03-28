@@ -1,65 +1,72 @@
 import { prisma } from "../../src/lib/prisma";
 
 async function main() {
+  // Categories - upsert avoids duplicate errors
+  const categories = [
+    "All",
+    "Public Free",
+    "Public Paid",
+    "Private Free",
+    "Private Paid",
+  ];
 
-    // categories
-
-    const math = await prisma.category.create({
-        data: {
-            name: "Mathematics"
-        },
+  const categoryRecords = [];
+  for (const name of categories) {
+    const cat = await prisma.category.upsert({
+      where: { name },
+      update: {}, // do nothing if exists
+      create: { name },
     });
+    categoryRecords.push(cat);
+  }
 
-    const physics = await prisma.category.create({
-        data: {
-            name: "Physics"
-        },
-    });
+  console.log("Categories added/ensured:", categoryRecords.map(c => c.name));
 
-    const english = await prisma.category.create({
-        data: {
-            name: "English"
-        },
-    });
+  // Users
+//   const tutorUser = await prisma.user.upsert({
+//     where: { email: "tutor@test.com" },
+//     update: {},
+//     create: {
+//       id: "tutor-user-1",
+//       name: "Md. Rahim",
+//       email: "tutor@test.com",
+//       role: "TUTOR",
+//     },
+//   });
 
-    // users
+//   const studentUser = await prisma.user.upsert({
+//     where: { email: "student@test.com" },
+//     update: {},
+//     create: {
+//       id: "student-user-1",
+//       name: "Md. Karim",
+//       email: "student@test.com",
+//       role: "STUDENT",
+//     },
+//   });
 
-    const tutorUser = await prisma.user.create({
-        data: {
-            id: "tutor-user-1",
-            name: "Md. Rahim",
-            email: "tutor@test.com",
-            role: "TUTOR",
-        },
-    });
+  // Tutor profile
+//   await prisma.tutorProfile.upsert({
+//     where: { userId: tutorUser.id },
+//     update: {
+//       bio: "Experienced math and physics tutor with 5+ years experience.",
+//       pricePerHr: 800,
+//       rating: 4.7,
+//     },
+//     create: {
+//       userId: tutorUser.id,
+//       bio: "Experienced math and physics tutor with 5+ years experience.",
+//       pricePerHr: 800,
+//       rating: 4.7,
+//       categories: {
+//         connect: categoryRecords.map(c => ({ id: c.id })),
+//       },
+//     },
+//   });
 
-    const studentUser = await prisma.user.create({
-        data: {
-            id: "student-user-1",
-            name: "Md. Karim",
-            email: "student@test.com",
-            role: "STUDENT",
-        },
-    });
-
-    // tutor profile
-
-    await prisma.tutorProfile.create({
-        data: {
-            userId: tutorUser.id,
-            bio: "Experienced math and physics tutor with 5+ years experience.",
-            pricePerHr: 800,
-            rating: 4.7,
-            categories: {
-                connect: [{ id: math.id }, { id: physics.id }],
-            },
-        }
-    })
-
-    console.log("Tutor Profile added");
+//   console.log("Tutor profile added/ensured");
 }
 
 main()
-
-    .catch(console.error)
-    .finally(() => prisma.$disconnect());
+  .catch(console.error)
+  .finally(() => prisma.$disconnect());
