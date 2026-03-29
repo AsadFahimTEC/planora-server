@@ -1,6 +1,7 @@
 import { adminRouter } from './modules/admin/admin.routes';
 import { reviewRouter } from './modules/review/review.routes';
 import { bookingRouter } from './modules/events/events.routes';
+import { invitationRouter } from './modules/invitations/invitation.route';
 import { categoryRouter } from './modules/category/category.routes';
 import { tutorRouter } from './modules/tutor/tutor.routes';
 import { authRouter } from './modules/auth/auth.routes';
@@ -35,6 +36,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/tutors", tutorRouter);
 app.use("/api/admin", categoryRouter);
 app.use("/api/events", bookingRouter);
+app.use("/api/invitations", invitationRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/admin", adminRouter);
 
