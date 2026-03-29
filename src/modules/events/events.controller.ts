@@ -26,31 +26,13 @@ const createEvent = async (req: Request, res: Response) => {
 };
 
 const getMyEvents = async (req: Request, res: Response) => {
-  try {
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized",
-      });
-    }
+    const tutors = await eventService.getMyEvents(req.params.id as string);
 
-    const userId = req.user.id;
-
-    const events = await eventService.getMyEvents(userId);
-
-    return res.status(200).json({
-      success: true,
-      count: events.length,
-      data: events,
+    res.status(200).json({
+        success: true,
+        message: "All Events retrieved successfully",
+        data: tutors,
     });
-  } catch (error: any) {
-    console.error("Controller Error:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: error.message || "Internal Server Error",
-    });
-  }
 };
 
 const getEventDetails = async (req: Request, res: Response) => {
@@ -77,57 +59,29 @@ const getAllEvents = async (req: Request, res: Response) => {
 };
 
 const updateEvent = async (req: Request, res: Response) => {
-    try {
-        const userId = req.user!.id;
+  const event = await eventService.updateEvent(
+    req.params.id as string,
+    req.body
+  );
 
-        const profile = await eventService.updateEvent(userId, req.body);
-
-        res.status(200).json({
-            success: true,
-            message: "Events updated successfully",
-            data: profile,
-        });
-    } catch (error: any) {
-        res.status(400).json({
-            success: false,
-            message: error.message || "Failed to update event!",
-        });
-    }
+  res.status(200).json({
+    success: true,
+    message: "Event updated",
+    data: event,
+  });
 };
 
 const deleteEvent = async (req: Request, res: Response) => {
-  try {
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized",
-      });
-    }
+  const event = await eventService.deleteEvent(
+    req.params.id as string,
+    req.user?.id as string
+  );
 
-    const { id } = req.params;
-
-    if (!id) {
-      return res.status(400).json({
-        success: false,
-        message: "Event ID is required",
-      });
-    }
-
-    const deletedEvent = await eventService.deleteEvent(id as string, req.user.id);
-
-    return res.status(200).json({
-      success: true,
-      message: "Event deleted successfully",
-      data: deletedEvent,
-    });
-  } catch (error: any) {
-    console.error("Delete Error:", error.message);
-
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-  }
+  res.status(200).json({
+    success: true,
+    message: "Event deleted",
+    data: event,
+  });
 };
 
 

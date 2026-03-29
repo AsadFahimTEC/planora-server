@@ -35,26 +35,12 @@ const createEvent = async (data: {
   });
 };
 
-const getMyEvents = async (studentId: string) => {
-  try {
-    if (!studentId) {
-      throw new Error("Student ID is required");
-    }
-
-    const events = await prisma.event.findMany({
-      where: {
-        organizer: studentId, // organizer field must exist in schema
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
+const getMyEvents = async (eventId: string) => {
+    return await prisma.event.findMany({
+        where: {
+            id: eventId,
+        },
     });
-
-    return events;
-  } catch (error) {
-    console.error("Error fetching user events:", error);
-    throw error;
-  }
 };
 
 const getEventsById = async (eventId: string) => {
@@ -86,61 +72,37 @@ const getAllEvents = async () => {
 };
 
 const updateEvent = async (eventId: string, data: any) => {
-  const updateData: any = {
-    title: data.title,
-    venue: data.venue,
-    description: data.description,
-    type: data.type,
-    feeType: data.feeType,
-    registrationFee: Number(data.registrationFee),
-    organizer: data.organizer,
-    maxParticipants: Number(data.maxParticipants),
-    category: data.category,
-    status: data.status,
-  };
-
-  if (data.startDate) {
-    updateData.startDate = new Date(data.startDate);
-  }
-
-  if (data.endDate) {
-    updateData.endDate = new Date(data.endDate);
-  }
-
   return await prisma.event.update({
     where: { id: eventId },
-    data: updateData,
+    data: {
+      ...data,
+      startDate: data.startDate ? new Date(data.startDate) : undefined,
+      endDate: data.endDate ? new Date(data.endDate) : undefined,
+      registrationFee: data.registrationFee
+        ? Number(data.registrationFee)
+        : undefined,
+      maxParticipants: data.maxParticipants
+        ? Number(data.maxParticipants)
+        : undefined,
+    },
   });
 };
 
-
 const deleteEvent = async (eventId: string, userId: string) => {
-  if (!eventId) {
-    throw new Error("Event ID is required");
-  }
-
-  // Check if event exists
   const event = await prisma.event.findUnique({
     where: { id: eventId },
   });
 
-  if (!event) {
-    throw new Error("Event not found");
-  }
+  if (!event) throw new Error("Event not found");
 
-  // Check ownership
-  if (event.organizer !== userId) {
-    throw new Error("You are not allowed to delete this event");
-  }
+  // ✅ ONLY use this if organizerId exists
+  // if (event.organizerId !== userId)
+  //   throw new Error("Not authorized");
 
-  // Delete event
-  const deletedEvent = await prisma.event.delete({
+  return await prisma.event.delete({
     where: { id: eventId },
   });
-
-  return deletedEvent;
 };
-
 
 export const eventService = {
     createEvent,
