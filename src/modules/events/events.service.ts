@@ -35,125 +35,118 @@ const createEvent = async (data: {
   });
 };
 
-// const getMyBookings = async (studentId: string) => {
-//     return await prisma.booking.findMany({
-//         where: { studentId },
-//         include: {
-//             tutor: {
-//                 include: {
-//                     user: true
-//                 },
-//             },
-//         },
-//         orderBy: {
-//             createdAt: "desc"
-//         },
-//     });
-// };
+const getMyEvents = async (studentId: string) => {
+  try {
+    if (!studentId) {
+      throw new Error("Student ID is required");
+    }
 
-// const getBookingById = async (bookingId: string, studentId: string) => {
-//     return await prisma.booking.findFirst({
-//         where: {
-//             id: bookingId,
-//             studentId,
-//         },
-//         include: {
-//             tutor: {
-//                 include: {
-//                     user: true
-//                 }
-//             },
-//             student: true,
-//         },
-//     });
-// };
+    const events = await prisma.event.findMany({
+      where: {
+        organizer: studentId, // organizer field must exist in schema
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
-// const getAllTutors = async () => {
-//     return await prisma.tutorProfile.findMany({
-//         select: {
-//             userId: true,
-//             id: true,
-//             bio: true,
-//             pricePerHr: true,
-//             rating: true,
-//             user: {
-//                 select: {
-//                     name: true,
-//                     email: true,
-//                     image: true
-//                 }
-//             }
-//         },
+    return events;
+  } catch (error) {
+    console.error("Error fetching user events:", error);
+    throw error;
+  }
+};
 
-//     });
-// };
+const getEventsById = async (eventId: string) => {
+    return await prisma.event.findUnique({
+        where: {
+            id: eventId,
+        },
+    });
+};
 
-// const updateProfile = async (userId: string, data: any) => {
-//     // check tutor profile exists
-//     const existingProfile = await prisma.tutorProfile.findUnique({
-//         where: { userId },
-//     });
+const getAllEvents = async () => {
+    return await prisma.event.findMany({
+        select: {
+            id: true,
+            title: true,
+            startDate: true,
+            endDate: true,
+            venue: true,
+            description: true,
+            type: true,
+            feeType: true,
+            registrationFee: true,
+            organizer: true,
+            maxParticipants: true,
+            category: true,
+            status: true,
+        },
+    });
+};
 
-//     if (!existingProfile) {
-//         // create if not exists
-//         return prisma.tutorProfile.create({
-//             data: {
-//                 userId,
-//                 bio: data.bio,
-//                 pricePerHr: data.pricePerHr,
-//                 categories: {
-//                     connect: data.categoryIds.map((id: string) => ({ id })),
-//                 },
-//             },
-//             include: { categories: true },
-//         });
-//     }
+const updateEvent = async (eventId: string, data: any) => {
+  const updateData: any = {
+    title: data.title,
+    venue: data.venue,
+    description: data.description,
+    type: data.type,
+    feeType: data.feeType,
+    registrationFee: Number(data.registrationFee),
+    organizer: data.organizer,
+    maxParticipants: Number(data.maxParticipants),
+    category: data.category,
+    status: data.status,
+  };
 
-//     // update if exists
-//     return prisma.tutorProfile.update({
-//         where: { userId },
-//         data: {
-//             bio: data.bio,
-//             pricePerHr: data.pricePerHr,
-//             categories: {
-//                 set: data.categoryIds.map((id: string) => ({ id })),
-//             },
-//         },
-//         include: { categories: true },
-//     });
-// };
+  if (data.startDate) {
+    updateData.startDate = new Date(data.startDate);
+  }
 
-// const cancelBooking = async (req: Request<{ id: string }>, res: Response) => {
-//   try {
-//     const bookingId = req.params.id;
-//     const studentId = req.user!.id; // comes from auth middleware
+  if (data.endDate) {
+    updateData.endDate = new Date(data.endDate);
+  }
 
-//     // Call service to cancel booking
-//     const booking = await bookingService.cancelBooking(bookingId, studentId);
+  return await prisma.event.update({
+    where: { id: eventId },
+    data: updateData,
+  });
+};
 
-//     if (!booking) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Events not found or not owned by you",
-//       });
-//     }
 
-//     res.status(200).json({
-//       success: true,
-//       message: "Events cancelled successfully",
-//       data: booking,
-//     });
-//   } catch (err: any) {
-//     console.error("Cancel booking error:", err.message || err);
+const deleteEvent = async (eventId: string, userId: string) => {
+  if (!eventId) {
+    throw new Error("Event ID is required");
+  }
 
-//     res.status(500).json({
-//       success: false,
-//       message: "Failed to cancel event",
-//     });
-//   }
-// };
+  // Check if event exists
+  const event = await prisma.event.findUnique({
+    where: { id: eventId },
+  });
+
+  if (!event) {
+    throw new Error("Event not found");
+  }
+
+  // Check ownership
+  if (event.organizer !== userId) {
+    throw new Error("You are not allowed to delete this event");
+  }
+
+  // Delete event
+  const deletedEvent = await prisma.event.delete({
+    where: { id: eventId },
+  });
+
+  return deletedEvent;
+};
 
 
 export const eventService = {
     createEvent,
+    getMyEvents,
+    getEventsById,
+    getAllEvents,
+    updateEvent, 
+    deleteEvent
 }

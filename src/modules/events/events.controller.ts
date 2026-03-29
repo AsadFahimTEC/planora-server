@@ -25,86 +25,117 @@ const createEvent = async (req: Request, res: Response) => {
   }
 };
 
-// const getMyBookings = async (req: Request, res: Response) => {
-//     // const userId = req.user!.id;
-//     const bookings = await bookingService.getMyBookings(req.user!.id);
+const getMyEvents = async (req: Request, res: Response) => {
+  try {
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
 
-//     res.status(200).json({
-//         success: true,
-//         data: bookings,
-//     });
-// };
+    const userId = req.user.id;
 
-// const getBookingDetails = async (req: Request, res: Response) => {
-//     const booking = await bookingService.getBookingById(
-//         req.params.id as string,
-//         req.user!.id
-//     );
+    const events = await eventService.getMyEvents(userId);
 
-//     if (!booking) {
-//         return res.status(404).json({
-//             success: false,
-//             message: "Events not found",
-//         });
-//     }
+    return res.status(200).json({
+      success: true,
+      count: events.length,
+      data: events,
+    });
+  } catch (error: any) {
+    console.error("Controller Error:", error);
 
-//     res.json({ success: true, data: booking });
-// };
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
+  }
+};
 
-// const getAllTutors = async (req: Request, res: Response) => {
-//     const tutors = await bookingService.getAllTutors();
+const getEventDetails = async (req: Request, res: Response) => {
+    const booking = await eventService.getEventsById(req.params.id as string);
 
-//     res.status(200).json({
-//         success: true,
-//         message: "All Events retrieved successfully",
-//         data: tutors,
-//     });
-// };
+    if (!booking) {
+        return res.status(404).json({
+            success: false,
+            message: "Event not found",
+        });
+    }
 
-// const updateTutorProfile = async (req: Request, res: Response) => {
-//     try {
-//         const userId = req.user!.id;
+    res.json({ success: true, data: booking });
+};
 
-//         const profile = await bookingService.updateProfile(userId, req.body);
+const getAllEvents = async (req: Request, res: Response) => {
+    const tutors = await eventService.getAllEvents();
 
-//         res.status(200).json({
-//             success: true,
-//             message: "Events updated successfully",
-//             data: profile,
-//         });
-//     } catch (error: any) {
-//         res.status(400).json({
-//             success: false,
-//             message: error.message || "Failed to update event!",
-//         });
-//     }
-// };
+    res.status(200).json({
+        success: true,
+        message: "All Events retrieved successfully",
+        data: tutors,
+    });
+};
 
-// const cancelBooking = async (bookingId: string, studentId: string) => {
-//   // 1️⃣ Find booking
-//   const booking = await prisma.booking.findFirst({
-//     where: {
-//       id: bookingId,
-//       studentId,
-//     },
-//   });
+const updateEvent = async (req: Request, res: Response) => {
+    try {
+        const userId = req.user!.id;
 
-//   if (!booking) return null;
+        const profile = await eventService.updateEvent(userId, req.body);
 
-//   // 2️⃣ If already cancelled, return it
-//   if (booking.status === "CANCELLED") {
-//     return booking;
-//   }
+        res.status(200).json({
+            success: true,
+            message: "Events updated successfully",
+            data: profile,
+        });
+    } catch (error: any) {
+        res.status(400).json({
+            success: false,
+            message: error.message || "Failed to update event!",
+        });
+    }
+};
 
-//   // 3️⃣ Update booking status
-//   const updatedBooking = await prisma.booking.update({
-//     where: { id: bookingId },
-//     data: { status: "CANCELLED" },
-//   });
+const deleteEvent = async (req: Request, res: Response) => {
+  try {
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
 
-//   return updatedBooking;
-// };
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Event ID is required",
+      });
+    }
+
+    const deletedEvent = await eventService.deleteEvent(id as string, req.user.id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Event deleted successfully",
+      data: deletedEvent,
+    });
+  } catch (error: any) {
+    console.error("Delete Error:", error.message);
+
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 
 export const eventController = {
     createEvent,
+    getMyEvents,
+    getEventDetails,
+    getAllEvents, 
+    updateEvent,
+    deleteEvent
 }
