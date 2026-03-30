@@ -6,6 +6,8 @@ import { categoryRouter } from './modules/category/category.routes';
 import { tutorRouter } from './modules/tutor/tutor.routes';
 import { authRouter } from './modules/auth/auth.routes';
 
+
+
 import express, { type Application } from "express";
 import cors from "cors";
 
@@ -15,6 +17,7 @@ import {auth} from "./lib/auth";
 
 import errorHandler from "./middlewares/globalErrorHandling";
 import { notFound } from "./middlewares/notFound";
+import { paymentRouter } from './modules/sslcommerz/payment.route';
 
 const app: Application = express();
 
@@ -39,6 +42,7 @@ app.use("/api/events", bookingRouter);
 app.use("/api/invitations", invitationRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/sslcommerz", paymentRouter);
 
 app.get("/", (req, res) => {
     res.send("Planora is Running!")
