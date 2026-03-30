@@ -109,7 +109,7 @@ const joinEvent = async (req: Request, res: Response) => {
 // POST /api/events/:id/request
 const requestEvent = async (req: Request, res: Response) => {
   const eventId = Number(req.params.id);
-  const userId = Number(req.user?.id);
+  const userId = Number(req.user?.id); // <- req.user must exist
 
   if (!eventId || !userId) {
     return res.status(400).json({ message: "Event ID and user ID required" });
