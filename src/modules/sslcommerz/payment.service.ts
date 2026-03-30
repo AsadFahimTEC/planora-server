@@ -1,65 +1,66 @@
+import { Request, Response } from "express";
 import axios from "axios";
 
-const STORE_ID = "asadt69ca141a84b32"; // Replace with your store ID
-const STORE_PASSWORD = "asadt69ca141a84b32@ssl"; // Replace with your store password
-const SSL_COMMERZ_URL = "https://sandbox.sslcommerz.com/gwprocess/v4/api.php";
+// // In-memory storage for demo
+// interface Payment {
+//   tran_id: string;
+//   amount: number;
+//   status: string;
+// }
 
-// In-memory storage for demo
-interface Payment {
-  tran_id: string;
-  amount: number;
-  status: string;
-}
+// export const payments: Payment[] = [];
 
-export const payments: Payment[] = [];
+export const PaymentService = {
+  sslcommerz: async (req: Request, res: Response) => {
+    try {
+      const { eventId } = req.params;
+      const { amount } = req.body;
 
-export class PaymentService {
-  static async initiatePayment(eventId: number, amount: number) {
-    const tran_id = `tran_${Date.now()}`;
+      const total_amount = amount.toFixed(2);
 
-    const post_data = {
-      store_id: STORE_ID,
-      store_passwd: STORE_PASSWORD,
-      total_amount: amount,
-      currency: "BDT",
-      tran_id: tran_id,
-      success_url: `http://localhost:3000/api/payment/success?tran_id=${tran_id}`,
-      fail_url: `http://localhost:3000/api/payment/fail?tran_id=${tran_id}`,
-      cancel_url: `http://localhost:3000/api/payment/cancel?tran_id=${tran_id}`,
-      version: "4.0",
-      product_category: "Event",
-      product_name: `Event #${eventId}`,
-      cus_name: "Customer",
-      cus_email: "customer@example.com",
-      cus_add1: "Dhaka",
-      cus_city: "Dhaka",
-      cus_country: "Bangladesh",
-      cus_phone: "017xxxxxxxx",
-    };
+      const STORE_ID = "asadt69ca141a84b32"; // Replace with your store ID
+      const STORE_PASSWORD = "asadt69ca141a84b32@ssl"; // Replace with your store password
+      const SSL_COMMERZ_URL =
+        "https://sandbox.sslcommerz.com/gwprocess/v4/api.php";
 
-    const response = await axios.post(SSL_COMMERZ_URL, post_data, {
-      headers: { "Content-Type": "application/json" },
-    });
+      const paymentData = {
+        STORE_ID,
+        STORE_PASSWORD,
+        total_amount,
+        currency: "BDT",
+        tran_id: `tran_${Date.now()}`,
+        success_url: `http://localhost:3000/payment/success?eventId=${eventId}&userId=${userId}`,
+        fail_url: `http://localhost:3000/payment/fail`,
+        cancel_url: `http://localhost:3000/payment/cancel`,
+        cus_name: "Test User",
+        cus_email: "test@example.com",
+        cus_add1: "Dhaka",
+        cus_city: "Dhaka",
+        cus_postcode: "1000",
+        cus_country: "Bangladesh",
+        cus_phone: "01711111111",
+        shipping_method: "NO",
+        product_name: `Event-${eventId}`,
+        product_category: "Event",
+        product_profile: "general",
+      };
 
-    if (response.data && response.data.GatewayPageURL) {
-      payments.push({
-        tran_id,
-        eventId,
-        amount,
-        status: "Pending",
-      });
-      return response.data.GatewayPageURL;
-    } else {
-      throw new Error("SSLCOMMERZ initiation failed");
+      const response = await axios.post(
+        "https://sandbox.sslcommerz.com/gwprocess/v4/api.php",
+        paymentData,
+        { headers: { "Content-Type": "application/json" } },
+      );
+
+      if (response.data && response.data.GatewayPageURL) {
+        return res
+          .status(200)
+          .json({ GatewayPageURL: response.data.GatewayPageURL });
+      } else {
+        return res.status(500).json({ message: "SSLCOMMERZ Gateway failed" });
+      }
+    } catch (err: any) {
+      console.error(err);
+      return res.status(500).json({ message: err.message || "Payment failed" });
     }
-  }
-
-  static updatePaymentStatus(tran_id: string, status: string) {
-    const payment = payments.find((p) => p.tran_id === tran_id);
-    if (payment) {
-      payment.status = status;
-      return payment;
-    }
-    return null;
-  }
-}
+  },
+};
