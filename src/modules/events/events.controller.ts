@@ -85,11 +85,56 @@ const deleteEvent = async (req: Request, res: Response) => {
 };
 
 
+// POST /api/events/:id/join
+const joinEvent = async (req: Request, res: Response) => {
+  const eventId = Number(req.params.id);
+  const userId = Number(req.user?.id);
+
+  if (!eventId || !userId) {
+    return res.status(400).json({ message: "Event ID and user ID required" });
+  }
+
+  try {
+    const result = await eventService.joinEvent(eventId, userId);
+    if (result) {
+      return res.json({ message: "Joined successfully", data: result });
+    }
+    return res.status(404).json({ message: "Event not found or already joined" });
+  } catch (err: any) {
+    console.error(err);
+    return res.status(500).json({ message: err.message || "Join failed" });
+  }
+};
+
+// POST /api/events/:id/request
+const requestEvent = async (req: Request, res: Response) => {
+  const eventId = Number(req.params.id);
+  const userId = Number(req.user?.id);
+
+  if (!eventId || !userId) {
+    return res.status(400).json({ message: "Event ID and user ID required" });
+  }
+
+  try {
+    const result = await eventService.requestEvent(eventId, userId);
+    if (result) {
+      return res.json({ message: "Request sent successfully", data: result });
+    }
+    return res.status(404).json({ message: "Event not found or already requested" });
+  } catch (err: any) {
+    console.error(err);
+    return res.status(500).json({ message: err.message || "Request failed" });
+  }
+};
+
+
 export const eventController = {
     createEvent,
     getMyEvents,
     getEventDetails,
     getAllEvents, 
     updateEvent,
-    deleteEvent
+    deleteEvent,
+    joinEvent,
+    requestEvent,
 }

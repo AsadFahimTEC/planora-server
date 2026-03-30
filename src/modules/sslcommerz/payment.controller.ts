@@ -26,7 +26,7 @@ export class PaymentController {
       // Update payment status
       console.log(`Payment success: ${tran_id}`);
       // Mark user as joined/requested
-      await eventService.createEvent(Number(eventId), Number(userId));
+      await eventService.joinEvent(Number(eventId), Number(userId));
 
       res.send(`<h2>Payment Successful!</h2><p>Transaction ID: ${tran_id}</p>`);
     } catch (err: any) {

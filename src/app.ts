@@ -42,7 +42,7 @@ app.use("/api/events", bookingRouter);
 app.use("/api/invitations", invitationRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/admin", adminRouter);
-app.use("/api/payments/sslcommerz", paymentRouter);
+app.use("/api/payments", paymentRouter);
 
 app.get("/", (req, res) => {
     res.send("Planora is Running!")

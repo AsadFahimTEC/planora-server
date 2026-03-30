@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import  auth, { UserRole } from '../../middlewares/auth';
+import auth, { UserRole } from "../../middlewares/auth";
 
 import { eventController } from "./events.controller";
 
@@ -15,9 +15,11 @@ router.get("/", auth(UserRole.USER), eventController.getAllEvents);
 
 router.post("/", auth(UserRole.USER), eventController.createEvent);
 
+router.post("/:id/join", auth(UserRole.USER), eventController.joinEvent);
+router.post("/:id/request", auth(UserRole.USER), eventController.requestEvent);
+
 router.put("/:id", auth(UserRole.USER), eventController.updateEvent);
 
 router.delete("/:id", auth(UserRole.USER), eventController.deleteEvent);
-
 
 export const bookingRouter: Router = router;

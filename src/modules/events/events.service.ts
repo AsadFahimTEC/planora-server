@@ -2,6 +2,12 @@ import { Request } from "express";
 import { BookingStatus } from "../../../generated/prisma/enums"
 import { prisma } from "../../lib/prisma"
 
+interface EventParticipation {
+  userId: number;
+  eventId: number;
+  status: "joined" | "requested";
+}
+
 const createEvent = async (data: {
   title: string;
   startDate: string;
@@ -104,11 +110,40 @@ const deleteEvent = async (eventId: string, userId: string) => {
   });
 };
 
+// Temporary in-memory storage
+export const eventParticipations: EventParticipation[] = [];
+
+// Join a public event
+ const joinEvent = async (eventId: number, userId: number) => {
+  const exists = eventParticipations.find(
+    (p) => p.eventId === eventId && p.userId === userId
+  );
+  if (exists) return null;
+
+  const participation = { userId, eventId, status: "joined" as const };
+  eventParticipations.push(participation);
+  return participation;
+};
+
+// Request to join a private event
+const requestEvent = async (eventId: number, userId: number) => {
+  const exists = eventParticipations.find(
+    (p) => p.eventId === eventId && p.userId === userId
+  );
+  if (exists) return null;
+
+  const participation = { userId, eventId, status: "requested" as const };
+  eventParticipations.push(participation);
+  return participation;
+};
+
 export const eventService = {
     createEvent,
     getMyEvents,
     getEventsById,
     getAllEvents,
     updateEvent, 
-    deleteEvent
+    deleteEvent,
+    joinEvent,
+    requestEvent,
 }

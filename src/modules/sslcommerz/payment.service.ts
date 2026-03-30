@@ -16,12 +16,19 @@ export const PaymentService = {
       const { eventId } = req.params;
       const { amount } = req.body;
 
-      const total_amount = amount.toFixed(2);
+       // Validation
+      if (!eventId || !amount) return res.status(400).json({ message: "Missing eventId or amount" });
+
+      // Dummy user, replace with req.user from auth middleware
+      const userId = (req as any).user?.id || 1;
+
 
       const STORE_ID = "asadt69ca141a84b32"; // Replace with your store ID
       const STORE_PASSWORD = "asadt69ca141a84b32@ssl"; // Replace with your store password
       const SSL_COMMERZ_URL =
         "https://sandbox.sslcommerz.com/gwprocess/v4/api.php";
+
+        const total_amount = amount.toFixed(2);
 
       const paymentData = {
         STORE_ID,
