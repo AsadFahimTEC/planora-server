@@ -9,8 +9,8 @@ const router = express.Router();
 router.post("/sslcommerz", PaymentController.createPayment);
 
 // Payment result callbacks
-router.get("/success", auth(UserRole.USER), PaymentController.paymentSuccess);
-router.get("/fail", auth(UserRole.USER), PaymentController.paymentFail);
-router.get("/cancel", auth(UserRole.USER), PaymentController.paymentCancel);
+router.get("/success", auth(UserRole.USER, UserRole.ADMIN), PaymentController.paymentSuccess);
+router.get("/fail", auth(UserRole.USER, UserRole.ADMIN), PaymentController.paymentFail);
+router.get("/cancel", auth(UserRole.USER, UserRole.ADMIN), PaymentController.paymentCancel);
 
 export const paymentRouter: Router = router;
