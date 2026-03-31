@@ -19,14 +19,14 @@ var config = {
   "clientVersion": "7.3.0",
   "engineVersion": "9d6ad21cbbceab97458517b147a6a09ff43aa735",
   "activeProvider": "postgresql",
-  "inlineSchema": '// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = "prisma-client"\n  output   = "../generated/prisma"\n}\n\ndatasource db {\n  provider = "postgresql"\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  name      String\n  email     String   @unique\n  password  String?\n  isBanned  Boolean  @default(false)\n  createdAt DateTime @default(now())\n\n  tutorProfile    TutorProfile?\n  studentBookings Booking[]     @relation("StudentBookings")\n  reviews         Review[]\n  emailVerified   Boolean       @default(false)\n  image           String?\n  updatedAt       DateTime      @updatedAt\n  sessions        Session[]\n  accounts        Account[]\n\n  role String? @default("STUDENT")\n\n  @@map("user")\n}\n\nmodel Session {\n  id        String   @id\n  expiresAt DateTime\n  token     String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  ipAddress String?\n  userAgent String?\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([token])\n  @@index([userId])\n  @@map("session")\n}\n\nmodel Account {\n  id                    String    @id\n  accountId             String\n  providerId            String\n  userId                String\n  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n  accessToken           String?\n  refreshToken          String?\n  idToken               String?\n  accessTokenExpiresAt  DateTime?\n  refreshTokenExpiresAt DateTime?\n  scope                 String?\n  password              String?\n  createdAt             DateTime  @default(now())\n  updatedAt             DateTime  @updatedAt\n\n  @@index([userId])\n  @@map("account")\n}\n\nmodel Verification {\n  id         String   @id\n  identifier String\n  value      String\n  expiresAt  DateTime\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  @@index([identifier])\n  @@map("verification")\n}\n\nmodel Booking {\n  id        String        @id @default(uuid())\n  studentId String\n  tutorId   String\n  status    BookingStatus @default(UPCOMING)\n  createdAt DateTime      @default(now())\n\n  student User         @relation("StudentBookings", fields: [studentId], references: [id])\n  tutor   TutorProfile @relation(fields: [tutorId], references: [id])\n}\n\nenum BookingStatus {\n  UPCOMING\n  COMPLETED\n  CANCELLED\n}\n\nmodel TutorProfile {\n  id         String @id @default(uuid())\n  userId     String @unique\n  bio        String\n  pricePerHr Int\n  rating     Float  @default(0)\n\n  user         User           @relation(fields: [userId], references: [id])\n  categories   Category[]\n  availability Availability[]\n  bookings     Booking[]\n  reviews      Review[]\n}\n\nmodel Category {\n  id   String @id @default(uuid())\n  name String @unique\n\n  tutors TutorProfile[]\n}\n\nmodel Availability {\n  id        String @id @default(uuid())\n  tutorId   String\n  day       String\n  startTime String\n  endTime   String\n\n  tutor TutorProfile @relation(fields: [tutorId], references: [id])\n}\n\nmodel Review {\n  id        String   @id @default(uuid())\n  rating    Int\n  comment   String\n  createdAt DateTime @default(now())\n\n  studentId String\n  tutorId   String\n\n  student User         @relation(fields: [studentId], references: [id])\n  tutor   TutorProfile @relation(fields: [tutorId], references: [id])\n}\n',
+  "inlineSchema": '// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = "prisma-client"\n  output   = "../generated/prisma"\n}\n\ndatasource db {\n  provider = "postgresql"\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  name      String\n  email     String   @unique\n  password  String?\n  isBanned  Boolean  @default(false)\n  createdAt DateTime @default(now())\n\n  tutorProfile    TutorProfile?\n  studentBookings Booking[]     @relation("StudentBookings")\n  reviews         Review[]\n  emailVerified   Boolean       @default(false)\n  image           String?\n  updatedAt       DateTime      @updatedAt\n  sessions        Session[]\n  accounts        Account[]\n\n  role String? @default("STUDENT")\n\n  @@map("user")\n}\n\nmodel Session {\n  id        String   @id\n  expiresAt DateTime\n  token     String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  ipAddress String?\n  userAgent String?\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([token])\n  @@index([userId])\n  @@map("session")\n}\n\nmodel Account {\n  id                    String    @id\n  accountId             String\n  providerId            String\n  userId                String\n  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n  accessToken           String?\n  refreshToken          String?\n  idToken               String?\n  accessTokenExpiresAt  DateTime?\n  refreshTokenExpiresAt DateTime?\n  scope                 String?\n  password              String?\n  createdAt             DateTime  @default(now())\n  updatedAt             DateTime  @updatedAt\n\n  @@index([userId])\n  @@map("account")\n}\n\nmodel Verification {\n  id         String   @id\n  identifier String\n  value      String\n  expiresAt  DateTime\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  @@index([identifier])\n  @@map("verification")\n}\n\nmodel Booking {\n  id        String        @id @default(uuid())\n  studentId String\n  tutorId   String\n  status    BookingStatus @default(UPCOMING)\n  createdAt DateTime      @default(now())\n\n  student User         @relation("StudentBookings", fields: [studentId], references: [id])\n  tutor   TutorProfile @relation(fields: [tutorId], references: [id])\n}\n\nmodel Event {\n  id              String   @id @default(uuid())\n  title           String\n  startDate       DateTime\n  endDate         DateTime\n  venue           String\n  description     String\n  type            String\n  feeType         String\n  registrationFee Float\n  organizer       String\n  maxParticipants Int\n  category        String\n  status          String\n  createdAt       DateTime @default(now())\n  updatedAt       DateTime @updatedAt\n}\n\nenum BookingStatus {\n  UPCOMING\n  COMPLETED\n  CANCELLED\n}\n\nmodel TutorProfile {\n  id         String @id @default(uuid())\n  userId     String @unique\n  bio        String\n  pricePerHr Int\n  rating     Float  @default(0)\n\n  user         User           @relation(fields: [userId], references: [id])\n  categories   Category[]\n  availability Availability[]\n  bookings     Booking[]\n  reviews      Review[]\n}\n\nmodel Category {\n  id   String @id @default(uuid())\n  name String @unique\n\n  tutors TutorProfile[]\n}\n\nmodel Availability {\n  id        String @id @default(uuid())\n  tutorId   String\n  day       String\n  startTime String\n  endTime   String\n\n  tutor TutorProfile @relation(fields: [tutorId], references: [id])\n}\n\nmodel Review {\n  id        String   @id @default(uuid())\n  rating    Int\n  comment   String\n  createdAt DateTime @default(now())\n\n  studentId String\n  tutorId   String\n\n  student User         @relation(fields: [studentId], references: [id])\n  tutor   TutorProfile @relation(fields: [tutorId], references: [id])\n}\n',
   "runtimeDataModel": {
     "models": {},
     "enums": {},
     "types": {}
   }
 };
-config.runtimeDataModel = JSON.parse('{"models":{"User":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"email","kind":"scalar","type":"String"},{"name":"password","kind":"scalar","type":"String"},{"name":"isBanned","kind":"scalar","type":"Boolean"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"tutorProfile","kind":"object","type":"TutorProfile","relationName":"TutorProfileToUser"},{"name":"studentBookings","kind":"object","type":"Booking","relationName":"StudentBookings"},{"name":"reviews","kind":"object","type":"Review","relationName":"ReviewToUser"},{"name":"emailVerified","kind":"scalar","type":"Boolean"},{"name":"image","kind":"scalar","type":"String"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"sessions","kind":"object","type":"Session","relationName":"SessionToUser"},{"name":"accounts","kind":"object","type":"Account","relationName":"AccountToUser"},{"name":"role","kind":"scalar","type":"String"}],"dbName":"user"},"Session":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"token","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"ipAddress","kind":"scalar","type":"String"},{"name":"userAgent","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"SessionToUser"}],"dbName":"session"},"Account":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"accountId","kind":"scalar","type":"String"},{"name":"providerId","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"AccountToUser"},{"name":"accessToken","kind":"scalar","type":"String"},{"name":"refreshToken","kind":"scalar","type":"String"},{"name":"idToken","kind":"scalar","type":"String"},{"name":"accessTokenExpiresAt","kind":"scalar","type":"DateTime"},{"name":"refreshTokenExpiresAt","kind":"scalar","type":"DateTime"},{"name":"scope","kind":"scalar","type":"String"},{"name":"password","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"account"},"Verification":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"identifier","kind":"scalar","type":"String"},{"name":"value","kind":"scalar","type":"String"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"verification"},"Booking":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"studentId","kind":"scalar","type":"String"},{"name":"tutorId","kind":"scalar","type":"String"},{"name":"status","kind":"enum","type":"BookingStatus"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"student","kind":"object","type":"User","relationName":"StudentBookings"},{"name":"tutor","kind":"object","type":"TutorProfile","relationName":"BookingToTutorProfile"}],"dbName":null},"TutorProfile":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"bio","kind":"scalar","type":"String"},{"name":"pricePerHr","kind":"scalar","type":"Int"},{"name":"rating","kind":"scalar","type":"Float"},{"name":"user","kind":"object","type":"User","relationName":"TutorProfileToUser"},{"name":"categories","kind":"object","type":"Category","relationName":"CategoryToTutorProfile"},{"name":"availability","kind":"object","type":"Availability","relationName":"AvailabilityToTutorProfile"},{"name":"bookings","kind":"object","type":"Booking","relationName":"BookingToTutorProfile"},{"name":"reviews","kind":"object","type":"Review","relationName":"ReviewToTutorProfile"}],"dbName":null},"Category":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"tutors","kind":"object","type":"TutorProfile","relationName":"CategoryToTutorProfile"}],"dbName":null},"Availability":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"tutorId","kind":"scalar","type":"String"},{"name":"day","kind":"scalar","type":"String"},{"name":"startTime","kind":"scalar","type":"String"},{"name":"endTime","kind":"scalar","type":"String"},{"name":"tutor","kind":"object","type":"TutorProfile","relationName":"AvailabilityToTutorProfile"}],"dbName":null},"Review":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"rating","kind":"scalar","type":"Int"},{"name":"comment","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"studentId","kind":"scalar","type":"String"},{"name":"tutorId","kind":"scalar","type":"String"},{"name":"student","kind":"object","type":"User","relationName":"ReviewToUser"},{"name":"tutor","kind":"object","type":"TutorProfile","relationName":"ReviewToTutorProfile"}],"dbName":null}},"enums":{},"types":{}}');
+config.runtimeDataModel = JSON.parse('{"models":{"User":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"email","kind":"scalar","type":"String"},{"name":"password","kind":"scalar","type":"String"},{"name":"isBanned","kind":"scalar","type":"Boolean"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"tutorProfile","kind":"object","type":"TutorProfile","relationName":"TutorProfileToUser"},{"name":"studentBookings","kind":"object","type":"Booking","relationName":"StudentBookings"},{"name":"reviews","kind":"object","type":"Review","relationName":"ReviewToUser"},{"name":"emailVerified","kind":"scalar","type":"Boolean"},{"name":"image","kind":"scalar","type":"String"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"sessions","kind":"object","type":"Session","relationName":"SessionToUser"},{"name":"accounts","kind":"object","type":"Account","relationName":"AccountToUser"},{"name":"role","kind":"scalar","type":"String"}],"dbName":"user"},"Session":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"token","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"ipAddress","kind":"scalar","type":"String"},{"name":"userAgent","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"SessionToUser"}],"dbName":"session"},"Account":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"accountId","kind":"scalar","type":"String"},{"name":"providerId","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"user","kind":"object","type":"User","relationName":"AccountToUser"},{"name":"accessToken","kind":"scalar","type":"String"},{"name":"refreshToken","kind":"scalar","type":"String"},{"name":"idToken","kind":"scalar","type":"String"},{"name":"accessTokenExpiresAt","kind":"scalar","type":"DateTime"},{"name":"refreshTokenExpiresAt","kind":"scalar","type":"DateTime"},{"name":"scope","kind":"scalar","type":"String"},{"name":"password","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"account"},"Verification":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"identifier","kind":"scalar","type":"String"},{"name":"value","kind":"scalar","type":"String"},{"name":"expiresAt","kind":"scalar","type":"DateTime"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":"verification"},"Booking":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"studentId","kind":"scalar","type":"String"},{"name":"tutorId","kind":"scalar","type":"String"},{"name":"status","kind":"enum","type":"BookingStatus"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"student","kind":"object","type":"User","relationName":"StudentBookings"},{"name":"tutor","kind":"object","type":"TutorProfile","relationName":"BookingToTutorProfile"}],"dbName":null},"Event":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"title","kind":"scalar","type":"String"},{"name":"startDate","kind":"scalar","type":"DateTime"},{"name":"endDate","kind":"scalar","type":"DateTime"},{"name":"venue","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"type","kind":"scalar","type":"String"},{"name":"feeType","kind":"scalar","type":"String"},{"name":"registrationFee","kind":"scalar","type":"Float"},{"name":"organizer","kind":"scalar","type":"String"},{"name":"maxParticipants","kind":"scalar","type":"Int"},{"name":"category","kind":"scalar","type":"String"},{"name":"status","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"}],"dbName":null},"TutorProfile":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"bio","kind":"scalar","type":"String"},{"name":"pricePerHr","kind":"scalar","type":"Int"},{"name":"rating","kind":"scalar","type":"Float"},{"name":"user","kind":"object","type":"User","relationName":"TutorProfileToUser"},{"name":"categories","kind":"object","type":"Category","relationName":"CategoryToTutorProfile"},{"name":"availability","kind":"object","type":"Availability","relationName":"AvailabilityToTutorProfile"},{"name":"bookings","kind":"object","type":"Booking","relationName":"BookingToTutorProfile"},{"name":"reviews","kind":"object","type":"Review","relationName":"ReviewToTutorProfile"}],"dbName":null},"Category":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"tutors","kind":"object","type":"TutorProfile","relationName":"CategoryToTutorProfile"}],"dbName":null},"Availability":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"tutorId","kind":"scalar","type":"String"},{"name":"day","kind":"scalar","type":"String"},{"name":"startTime","kind":"scalar","type":"String"},{"name":"endTime","kind":"scalar","type":"String"},{"name":"tutor","kind":"object","type":"TutorProfile","relationName":"AvailabilityToTutorProfile"}],"dbName":null},"Review":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"rating","kind":"scalar","type":"Int"},{"name":"comment","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"studentId","kind":"scalar","type":"String"},{"name":"tutorId","kind":"scalar","type":"String"},{"name":"student","kind":"object","type":"User","relationName":"ReviewToUser"},{"name":"tutor","kind":"object","type":"TutorProfile","relationName":"ReviewToTutorProfile"}],"dbName":null}},"enums":{},"types":{}}');
 async function decodeBase64AsWasm(wasmBase64) {
   const { Buffer: Buffer2 } = await import("buffer");
   const wasmArray = Buffer2.from(wasmBase64, "base64");
@@ -54,6 +54,7 @@ __export(prismaNamespace_exports, {
   CategoryScalarFieldEnum: () => CategoryScalarFieldEnum,
   DbNull: () => DbNull2,
   Decimal: () => Decimal2,
+  EventScalarFieldEnum: () => EventScalarFieldEnum,
   JsonNull: () => JsonNull2,
   ModelName: () => ModelName,
   NullTypes: () => NullTypes2,
@@ -111,6 +112,7 @@ var ModelName = {
   Account: "Account",
   Verification: "Verification",
   Booking: "Booking",
+  Event: "Event",
   TutorProfile: "TutorProfile",
   Category: "Category",
   Availability: "Availability",
@@ -174,6 +176,23 @@ var BookingScalarFieldEnum = {
   status: "status",
   createdAt: "createdAt"
 };
+var EventScalarFieldEnum = {
+  id: "id",
+  title: "title",
+  startDate: "startDate",
+  endDate: "endDate",
+  venue: "venue",
+  description: "description",
+  type: "type",
+  feeType: "feeType",
+  registrationFee: "registrationFee",
+  organizer: "organizer",
+  maxParticipants: "maxParticipants",
+  category: "category",
+  status: "status",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt"
+};
 var TutorProfileScalarFieldEnum = {
   id: "id",
   userId: "userId",
@@ -213,13 +232,6 @@ var NullsOrder = {
   last: "last"
 };
 var defineExtension = runtime2.Extensions.defineExtension;
-
-// generated/prisma/enums.ts
-var BookingStatus = {
-  UPCOMING: "UPCOMING",
-  COMPLETED: "COMPLETED",
-  CANCELLED: "CANCELLED"
-};
 
 // generated/prisma/client.ts
 globalThis["__dirname"] = path.dirname(fileURLToPath(import.meta.url));
@@ -287,7 +299,7 @@ var auth = betterAuth({
       try {
         const verificationUrl = `${process.env.APP_URL}/verify-email/?token=${token}`;
         const info = await transporter.sendMail({
-          from: '"Skill Bridge" <skillbridge@ph.com>',
+          from: '"Planora" <planora@ph.com>',
           to: user.email,
           subject: "Please verify your email!",
           html: `
@@ -397,6 +409,11 @@ var auth = betterAuth({
 });
 
 // src/middlewares/auth.ts
+var UserRole = /* @__PURE__ */ ((UserRole2) => {
+  UserRole2["USER"] = "USER";
+  UserRole2["ADMIN"] = "ADMIN";
+  return UserRole2;
+})(UserRole || {});
 var auth2 = (...roles) => {
   return async (req, res, next) => {
     try {
@@ -517,281 +534,540 @@ var adminRouter = router;
 import express2 from "express";
 
 // src/modules/review/review.service.ts
-var createReview = async (studentId, tutorId, rating, comment) => {
-  return await prisma.review.create({
-    data: {
-      studentId,
-      tutorId,
-      rating,
-      comment
-    }
-  });
-};
 var reviewService = {
-  createReview
+  // Create a new review
+  createReview: async (studentId, tutorId, rating, comment) => {
+    try {
+      const review = await prisma.review.create({
+        data: {
+          studentId,
+          tutorId,
+          rating,
+          comment
+        }
+      });
+      return review;
+    } catch (error) {
+      console.error("Create Review Service Error:", error);
+      throw new Error("Failed to create review");
+    }
+  },
+  // Get all reviews for a tutor
+  getReviewsByTutor: async (tutorId) => {
+    try {
+      const reviews = await prisma.review.findMany({
+        where: { tutorId },
+        include: { student: { select: { id: true, name: true } } }
+      });
+      return reviews;
+    } catch (error) {
+      console.error("Get Reviews Service Error:", error);
+      throw new Error("Failed to fetch reviews");
+    }
+  },
+  // Get a single review by id
+  getReviewById: async (id) => {
+    try {
+      const review = await prisma.review.findUnique({
+        where: { id },
+        include: { student: { select: { id: true, name: true } } }
+      });
+      return review;
+    } catch (error) {
+      console.error("Get Review By ID Service Error:", error);
+      throw new Error("Failed to fetch review");
+    }
+  },
+  // Update a review
+  updateReview: async (reviewId, studentId, rating, comment) => {
+    try {
+      const review = await prisma.review.updateMany({
+        where: {
+          id: reviewId,
+          studentId
+          // ensure student can only update their review
+        },
+        data: {
+          rating,
+          comment
+        }
+      });
+      if (review.count === 0) {
+        throw new Error("Review not found or permission denied");
+      }
+      return await prisma.review.findUnique({ where: { id: reviewId } });
+    } catch (error) {
+      console.error("Update Review Service Error:", error);
+      throw new Error("Failed to update review");
+    }
+  },
+  // Delete a review
+  deleteReview: async (reviewId, studentId) => {
+    try {
+      const review = await prisma.review.deleteMany({
+        where: {
+          id: reviewId,
+          studentId
+          // ensure student can only delete their review
+        }
+      });
+      if (review.count === 0) {
+        throw new Error("Review not found or permission denied");
+      }
+      return { id: reviewId };
+    } catch (error) {
+      console.error("Delete Review Service Error:", error);
+      throw new Error("Failed to delete review");
+    }
+  }
 };
 
 // src/modules/review/review.controller.ts
-var createReview2 = async (req, res) => {
-  const { tutorId, rating, comment } = req.body;
-  const review = await reviewService.createReview(
-    req.user.id,
-    tutorId,
-    rating,
-    comment
-  );
-  res.status(201).json({
-    success: true,
-    message: "Review submitted successfully",
-    data: review
-  });
+var createReview = async (req, res) => {
+  try {
+    const { tutorId, rating, comment } = req.body;
+    const review = await reviewService.createReview(
+      req.user.id,
+      tutorId,
+      rating,
+      comment
+    );
+    res.status(201).json({
+      success: true,
+      message: "Review submitted successfully",
+      data: review
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+var getReviewsByTutor = async (req, res) => {
+  try {
+    const { tutorId } = req.params;
+    const reviews = await reviewService.getReviewsByTutor(tutorId);
+    res.status(200).json({ success: true, data: reviews });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+var getReviewById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const review = await reviewService.getReviewById(id);
+    if (!review)
+      return res.status(404).json({ success: false, message: "Review not found" });
+    res.status(200).json({ success: true, data: review });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+var updateReview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rating, comment } = req.body;
+    const updated = await reviewService.updateReview(
+      id,
+      req.user.id,
+      rating,
+      comment
+    );
+    res.status(200).json({ success: true, message: "Review updated", data: updated });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+var deleteReview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await reviewService.deleteReview(id, req.user.id);
+    res.status(200).json({ success: true, message: "Review deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 var reviewController = {
-  createReview: createReview2
+  createReview,
+  getReviewsByTutor,
+  getReviewById,
+  updateReview,
+  deleteReview
 };
 
 // src/modules/review/review.routes.ts
 var router2 = express2.Router();
-router2.post("/", auth_default("STUDENT" /* STUDENT */), reviewController.createReview);
+router2.post("/", auth_default("USER" /* USER */), reviewController.createReview);
+router2.get("/tutor/:tutorId", auth_default("USER" /* USER */), reviewController.getReviewsByTutor);
+router2.get("/:id", auth_default("USER" /* USER */), reviewController.getReviewById);
+router2.patch("/:id", auth_default("USER" /* USER */), reviewController.updateReview);
+router2.delete("/:id", auth_default("USER" /* USER */), reviewController.deleteReview);
 var reviewRouter = router2;
 
-// src/modules/booking/booking.routes.ts
+// src/modules/events/events.routes.ts
 import express3 from "express";
 
-// src/modules/booking/booking.service.ts
-var createBooking = async (studentId, tutorId) => {
-  return await prisma.booking.create({
+// src/modules/events/events.service.ts
+var createEvent = async (data) => {
+  return await prisma.event.create({
     data: {
-      studentId,
-      tutorId,
-      status: BookingStatus.UPCOMING
+      title: data.title,
+      startDate: new Date(data.startDate),
+      endDate: new Date(data.endDate),
+      venue: data.venue,
+      description: data.description,
+      type: data.type,
+      feeType: data.feeType,
+      registrationFee: data.registrationFee,
+      organizer: data.organizer,
+      maxParticipants: data.maxParticipants,
+      category: data.category,
+      status: data.status
     }
   });
 };
-var getMyBookings = async (studentId) => {
-  return await prisma.booking.findMany({
-    where: { studentId },
-    include: {
-      tutor: {
-        include: {
-          user: true
-        }
-      }
-    },
-    orderBy: {
-      createdAt: "desc"
-    }
-  });
-};
-var getBookingById = async (bookingId, studentId) => {
-  return await prisma.booking.findFirst({
+var getMyEvents = async (eventId) => {
+  return await prisma.event.findMany({
     where: {
-      id: bookingId,
-      studentId
-    },
-    include: {
-      tutor: {
-        include: {
-          user: true
-        }
-      },
-      student: true
+      id: eventId
     }
   });
 };
-var getAllTutors = async () => {
-  return await prisma.tutorProfile.findMany({
+var getEventsById = async (eventId) => {
+  return await prisma.event.findUnique({
+    where: {
+      id: eventId
+    }
+  });
+};
+var getAllEvents = async () => {
+  return await prisma.event.findMany({
     select: {
-      userId: true,
       id: true,
-      bio: true,
-      pricePerHr: true,
-      rating: true,
-      user: {
-        select: {
-          name: true,
-          email: true,
-          image: true
-        }
-      }
+      title: true,
+      startDate: true,
+      endDate: true,
+      venue: true,
+      description: true,
+      type: true,
+      feeType: true,
+      registrationFee: true,
+      organizer: true,
+      maxParticipants: true,
+      category: true,
+      status: true
     }
   });
 };
-var updateProfile = async (userId, data) => {
-  const existingProfile = await prisma.tutorProfile.findUnique({
-    where: { userId }
-  });
-  if (!existingProfile) {
-    return prisma.tutorProfile.create({
-      data: {
-        userId,
-        bio: data.bio,
-        pricePerHr: data.pricePerHr,
-        categories: {
-          connect: data.categoryIds.map((id) => ({ id }))
-        }
-      },
-      include: { categories: true }
-    });
-  }
-  return prisma.tutorProfile.update({
-    where: { userId },
+var updateEvent = async (eventId, data) => {
+  return await prisma.event.update({
+    where: { id: eventId },
     data: {
-      bio: data.bio,
-      pricePerHr: data.pricePerHr,
-      categories: {
-        set: data.categoryIds.map((id) => ({ id }))
-      }
-    },
-    include: { categories: true }
+      ...data,
+      startDate: data.startDate ? new Date(data.startDate) : void 0,
+      endDate: data.endDate ? new Date(data.endDate) : void 0,
+      registrationFee: data.registrationFee ? Number(data.registrationFee) : void 0,
+      maxParticipants: data.maxParticipants ? Number(data.maxParticipants) : void 0
+    }
   });
 };
-var cancelBooking = async (req, res) => {
-  try {
-    const bookingId = req.params.id;
-    const studentId = req.user.id;
-    const booking = await bookingService.cancelBooking(bookingId, studentId);
-    if (!booking) {
-      return res.status(404).json({
-        success: false,
-        message: "Booking not found or not owned by you"
-      });
-    }
-    res.status(200).json({
-      success: true,
-      message: "Booking cancelled successfully",
-      data: booking
-    });
-  } catch (err) {
-    console.error("Cancel booking error:", err.message || err);
-    res.status(500).json({
-      success: false,
-      message: "Failed to cancel booking"
-    });
-  }
+var deleteEvent = async (eventId, userId) => {
+  const event = await prisma.event.findUnique({
+    where: { id: eventId }
+  });
+  if (!event) throw new Error("Event not found");
+  return await prisma.event.delete({
+    where: { id: eventId }
+  });
 };
-var bookingService = {
-  createBooking,
-  getMyBookings,
-  getBookingById,
-  getAllTutors,
-  updateProfile,
-  cancelBooking
+var eventParticipations = [];
+var joinEvent = async (eventId, userId) => {
+  const exists = eventParticipations.find(
+    (p) => p.eventId === eventId && p.userId === userId
+  );
+  if (exists) return null;
+  const participation = { userId, eventId, status: "joined" };
+  eventParticipations.push(participation);
+  return participation;
+};
+var requestEvent = async (eventId, userId) => {
+  const exists = eventParticipations.find(
+    (p) => p.eventId === eventId && p.userId === userId
+  );
+  if (exists) return null;
+  const participation = { userId, eventId, status: "requested" };
+  eventParticipations.push(participation);
+  return participation;
+};
+var eventService = {
+  createEvent,
+  getMyEvents,
+  getEventsById,
+  getAllEvents,
+  updateEvent,
+  deleteEvent,
+  joinEvent,
+  requestEvent
 };
 
-// src/modules/booking/booking.controller.ts
-var createBooking2 = async (req, res) => {
+// src/modules/events/events.controller.ts
+var createEvent2 = async (req, res) => {
   try {
-    const booking = await bookingService.createBooking(
-      req.user.id,
-      req.body.tutorId
-    );
-    res.status(200).json({
+    const event = await eventService.createEvent(req.body);
+    res.status(201).json({
       success: true,
-      message: "Booking created successfully",
-      data: booking
+      message: "Event created successfully",
+      data: event
     });
   } catch (error) {
+    console.error("Create Event Error:", error);
     res.status(400).json({
       success: false,
-      message: "Failed to create booking"
+      message: error.message || "Failed to create an event!"
     });
   }
 };
-var getMyBookings2 = async (req, res) => {
-  const bookings = await bookingService.getMyBookings(req.user.id);
+var getMyEvents2 = async (req, res) => {
+  const tutors = await eventService.getMyEvents(req.params.id);
   res.status(200).json({
     success: true,
-    data: bookings
+    message: "All Events retrieved successfully",
+    data: tutors
   });
 };
-var getBookingDetails = async (req, res) => {
-  const booking = await bookingService.getBookingById(
-    req.params.id,
-    req.user.id
-  );
+var getEventDetails = async (req, res) => {
+  const booking = await eventService.getEventsById(req.params.id);
   if (!booking) {
     return res.status(404).json({
       success: false,
-      message: "Booking not found"
+      message: "Event not found"
     });
   }
   res.json({ success: true, data: booking });
 };
-var getAllTutors2 = async (req, res) => {
-  const tutors = await bookingService.getAllTutors();
+var getAllEvents2 = async (req, res) => {
+  const tutors = await eventService.getAllEvents();
   res.status(200).json({
     success: true,
-    message: "All Tutors retrieved successfully",
+    message: "All Events retrieved successfully",
     data: tutors
   });
 };
-var updateTutorProfile = async (req, res) => {
+var updateEvent2 = async (req, res) => {
+  const event = await eventService.updateEvent(
+    req.params.id,
+    req.body
+  );
+  res.status(200).json({
+    success: true,
+    message: "Event updated",
+    data: event
+  });
+};
+var deleteEvent2 = async (req, res) => {
+  const event = await eventService.deleteEvent(
+    req.params.id,
+    req.user?.id
+  );
+  res.status(200).json({
+    success: true,
+    message: "Event deleted",
+    data: event
+  });
+};
+var joinEvent2 = async (req, res) => {
+  const eventId = Number(req.params.id);
+  const userId = Number(req.user?.id);
+  if (!eventId || !userId) {
+    return res.status(400).json({ message: "Event ID and user ID required" });
+  }
   try {
-    const userId = req.user.id;
-    const profile = await bookingService.updateProfile(userId, req.body);
-    res.status(200).json({
-      success: true,
-      message: "Tutor profile updated successfully",
-      data: profile
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.message || "Failed to update tutor profile"
-    });
-  }
-};
-var cancelBooking2 = async (bookingId, studentId) => {
-  const booking = await prisma.booking.findFirst({
-    where: {
-      id: bookingId,
-      studentId
+    const result = await eventService.joinEvent(eventId, userId);
+    if (result) {
+      return res.json({ message: "Joined successfully", data: result });
     }
-  });
-  if (!booking) return null;
-  if (booking.status === "CANCELLED") {
-    return booking;
+    return res.status(404).json({ message: "Event not found or already joined" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: err.message || "Join failed" });
   }
-  const updatedBooking = await prisma.booking.update({
-    where: { id: bookingId },
-    data: { status: "CANCELLED" }
-  });
-  return updatedBooking;
 };
-var bookingController = {
-  createBooking: createBooking2,
-  getMyBookings: getMyBookings2,
-  getBookingDetails,
-  getAllTutors: getAllTutors2,
-  updateTutorProfile,
-  cancelBooking: cancelBooking2
+var requestEvent2 = async (req, res) => {
+  try {
+    const eventId = req.params.id;
+    const userId = req.user?.id;
+    if (!eventId || !userId) {
+      return res.status(400).json({
+        message: "Event ID and user ID required"
+      });
+    }
+    const result = await eventService.requestEvent(eventId, userId);
+    res.status(200).json({
+      message: "Request sent successfully",
+      data: result
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.message
+    });
+  }
+};
+var eventController = {
+  createEvent: createEvent2,
+  getMyEvents: getMyEvents2,
+  getEventDetails,
+  getAllEvents: getAllEvents2,
+  updateEvent: updateEvent2,
+  deleteEvent: deleteEvent2,
+  joinEvent: joinEvent2,
+  requestEvent: requestEvent2
 };
 
-// src/modules/booking/booking.routes.ts
+// src/modules/events/events.routes.ts
 var router3 = express3.Router();
-router3.get("/", auth_default("STUDENT" /* STUDENT */), bookingController.getMyBookings);
-router3.get("/:id", auth_default("STUDENT" /* STUDENT */), bookingController.getBookingDetails);
-router3.get("/", auth_default("STUDENT" /* STUDENT */), bookingController.getAllTutors);
-router3.post("/", auth_default("STUDENT" /* STUDENT */), bookingController.createBooking);
-router3.put("/profiles", auth_default("STUDENT" /* STUDENT */), bookingController.updateTutorProfile);
-router3.patch("/:id", auth_default("STUDENT" /* STUDENT */), bookingController.cancelBooking);
+router3.get("/", auth_default("USER" /* USER */), eventController.getMyEvents);
+router3.get("/:id", auth_default("USER" /* USER */), eventController.getEventDetails);
+router3.get("/", auth_default("USER" /* USER */), eventController.getAllEvents);
+router3.post("/", auth_default("USER" /* USER */), eventController.createEvent);
+router3.post("/:id/join", auth_default("USER" /* USER */), eventController.joinEvent);
+router3.post("/:id/request", auth_default("USER" /* USER */), eventController.requestEvent);
+router3.put("/:id", auth_default("USER" /* USER */), eventController.updateEvent);
+router3.delete("/:id", auth_default("USER" /* USER */), eventController.deleteEvent);
 var bookingRouter = router3;
 
-// src/modules/category/category.routes.ts
+// src/modules/invitations/invitation.route.ts
 import express4 from "express";
+
+// src/modules/invitations/invitation.service.ts
+var invitations = [];
+var InvitationService = {
+  // ✅ GET all
+  getAllInvitations: () => {
+    return invitations;
+  },
+  // ✅ GET by id
+  getInvitationById: (id) => {
+    return invitations.find((inv) => inv.id === id);
+  },
+  // ✅ CREATE (from Postman)
+  createInvitation: (payload) => {
+    invitations.push(payload);
+    return payload;
+  },
+  // ✅ UPDATE status
+  updateStatus: (id, status) => {
+    const invitation = invitations.find((inv) => inv.id === id);
+    if (!invitation) return null;
+    invitation.status = status;
+    return invitation;
+  },
+  // ✅ DELETE (optional but useful)
+  deleteInvitation: (id) => {
+    const index = invitations.findIndex((inv) => inv.id === id);
+    if (index === -1) return null;
+    const deleted = invitations.splice(index, 1);
+    return deleted[0];
+  }
+};
+
+// src/modules/invitations/invitation.controller.ts
+var InvitationController = {
+  // ✅ GET all
+  getAll: (req, res) => {
+    const data = InvitationService.getAllInvitations();
+    res.status(200).json({
+      success: true,
+      message: "Invitations fetched successfully",
+      data
+    });
+  },
+  // ✅ GET by id
+  getById: (req, res) => {
+    const id = Number(req.params.id);
+    const data = InvitationService.getInvitationById(id);
+    if (!data) {
+      return res.status(404).json({
+        success: false,
+        message: "Invitation not found"
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data
+    });
+  },
+  // ✅ POST (create from Postman)
+  create: (req, res) => {
+    const payload = req.body;
+    if (!payload || !payload.id) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid data"
+      });
+    }
+    const data = InvitationService.createInvitation(payload);
+    res.status(201).json({
+      success: true,
+      message: "Invitation created successfully",
+      data
+    });
+  },
+  // ✅ PATCH (update status)
+  updateStatus: (req, res) => {
+    const id = Number(req.params.id);
+    const { status } = req.body;
+    const data = InvitationService.updateStatus(id, status);
+    if (!data) {
+      return res.status(404).json({
+        success: false,
+        message: "Invitation not found"
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Status updated successfully",
+      data
+    });
+  },
+  // ✅ DELETE
+  delete: (req, res) => {
+    const id = Number(req.params.id);
+    const data = InvitationService.deleteInvitation(id);
+    if (!data) {
+      return res.status(404).json({
+        success: false,
+        message: "Invitation not found"
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Deleted successfully",
+      data
+    });
+  }
+};
+
+// src/modules/invitations/invitation.route.ts
 var router4 = express4.Router();
-router4.get("/categories", auth_default("ADMIN" /* ADMIN */), async (req, res) => {
+router4.get("/", auth_default("USER" /* USER */), InvitationController.getAll);
+router4.get("/:id", auth_default("USER" /* USER */), InvitationController.getById);
+router4.post("/", auth_default("USER" /* USER */), InvitationController.create);
+router4.patch("/:id", auth_default("USER" /* USER */), InvitationController.updateStatus);
+router4.delete("/:id", auth_default("USER" /* USER */), InvitationController.delete);
+var invitationRouter = router4;
+
+// src/modules/category/category.routes.ts
+import express5 from "express";
+var router5 = express5.Router();
+router5.get("/categories", auth_default("USER" /* USER */), async (req, res) => {
   const categories = await prisma.category.findMany();
   res.json({
     success: true,
     data: categories
   });
 });
-var categoryRouter = router4;
+var categoryRouter = router5;
 
 // src/modules/tutor/tutor.routes.ts
-import express5 from "express";
+import express6 from "express";
 
 // src/modules/tutor/tutor.service.ts
 var getTutors = (filters) => {
@@ -871,7 +1147,7 @@ var createProfile = async (userId, data) => {
     }
   });
 };
-var updateProfile2 = (userId, data) => {
+var updateProfile = (userId, data) => {
   return prisma.tutorProfile.update({
     where: { userId },
     data: {
@@ -936,7 +1212,7 @@ var tutorService = {
   getTutors,
   getTutorById,
   createProfile,
-  updateProfile: updateProfile2,
+  updateProfile,
   setAvailability,
   getAvailability,
   getTutorDashboard
@@ -973,7 +1249,7 @@ var createTutorProfile = async (req, res) => {
     });
   }
 };
-var updateTutorProfile2 = async (req, res) => {
+var updateTutorProfile = async (req, res) => {
   try {
     const userId = req.user?.id;
     const profile = await tutorService.updateProfile(userId, req.body);
@@ -1023,22 +1299,22 @@ var tutorController = {
   listTutors,
   tutorDetails,
   createTutorProfile,
-  updateTutorProfile: updateTutorProfile2,
+  updateTutorProfile,
   setAvailability: setAvailability2,
   getAvailability: getAvailability2,
   getTutorDashboard: getTutorDashboard2
 };
 
 // src/modules/tutor/tutor.routes.ts
-var router5 = express5.Router();
-router5.get("/", tutorController.listTutors);
-router5.get("/:id", tutorController.tutorDetails);
-router5.get("/", auth_default("TUTOR" /* TUTOR */), tutorController.getTutorDashboard);
-router5.get("/availability", auth_default("TUTOR" /* TUTOR */), tutorController.getAvailability);
-router5.post("/profile", auth_default("TUTOR" /* TUTOR */), tutorController.createTutorProfile);
-router5.put("/profile", auth_default("TUTOR" /* TUTOR */), tutorController.updateTutorProfile);
-router5.put("/availability", auth_default("TUTOR" /* TUTOR */), tutorController.setAvailability);
-var tutorRouter = router5;
+var router6 = express6.Router();
+router6.get("/", tutorController.listTutors);
+router6.get("/:id", tutorController.tutorDetails);
+router6.get("/", auth_default(UserRole.TUTOR), tutorController.getTutorDashboard);
+router6.get("/availability", auth_default(UserRole.TUTOR), tutorController.getAvailability);
+router6.post("/profile", auth_default(UserRole.TUTOR), tutorController.createTutorProfile);
+router6.put("/profile", auth_default(UserRole.TUTOR), tutorController.updateTutorProfile);
+router6.put("/availability", auth_default(UserRole.TUTOR), tutorController.setAvailability);
+var tutorRouter = router6;
 
 // src/modules/auth/auth.service.ts
 var register = async (data) => {
@@ -1115,15 +1391,15 @@ var authController = {
 };
 
 // src/modules/auth/auth.routes.ts
-import express6 from "express";
-var router6 = express6.Router();
-router6.post("/sign-up/email", authController.register);
-router6.post("/sign-in/email", authController.login);
-router6.get("/me", authController.getMe);
-var authRouter = router6;
+import express7 from "express";
+var router7 = express7.Router();
+router7.post("/sign-up/email", authController.register);
+router7.post("/sign-in/email", authController.login);
+router7.get("/me", authController.getMe);
+var authRouter = router7;
 
 // src/app.ts
-import express7 from "express";
+import express9 from "express";
 import cors from "cors";
 import { toNodeHandler } from "better-auth/node";
 
@@ -1182,22 +1458,137 @@ function notFound(req, res) {
   });
 }
 
+// src/modules/sslcommerz/payment.route.ts
+import express8 from "express";
+
+// src/modules/sslcommerz/payment.service.ts
+import axios from "axios";
+var sslcommerzPayment = {
+  createPayment: async (req, res) => {
+    try {
+      const { eventId, amount } = req.body;
+      const userId = req.user?.id;
+      if (!eventId || !amount || !userId) {
+        return res.status(400).json({
+          message: "eventId, amount, userId required"
+        });
+      }
+      const paymentData = {
+        store_id: "asadt69ca141a84b32",
+        store_passwd: "asadt69ca141a84b32@ssl",
+        total_amount: Number(amount).toFixed(2),
+        currency: "BDT",
+        tran_id: `tran_${Date.now()}`,
+        success_url: `http://localhost:3000/payment/success?eventId=${eventId}&userId=${userId}`,
+        fail_url: `http://localhost:3000/payment/fail`,
+        cancel_url: `http://localhost:3000/payment/cancel`,
+        cus_name: "Test User",
+        cus_email: "test@example.com",
+        cus_add1: "Dhaka",
+        cus_city: "Dhaka",
+        cus_postcode: "1000",
+        cus_country: "Bangladesh",
+        cus_phone: "01711111111",
+        shipping_method: "NO",
+        product_name: `Event-${eventId}`,
+        product_category: "Event",
+        product_profile: "general"
+      };
+      const response = await axios.post(
+        "https://sandbox.sslcommerz.com/gwprocess/v4/api.php",
+        paymentData,
+        {
+          headers: { "Content-Type": "application/json" }
+        }
+      );
+      if (response.data?.GatewayPageURL) {
+        return res.status(200).json({
+          GatewayPageURL: response.data.GatewayPageURL
+        });
+      }
+      return res.status(500).json({
+        message: "Payment gateway failed"
+      });
+    } catch (err) {
+      return res.status(500).json({
+        message: err.message || "Payment failed"
+      });
+    }
+  }
+};
+
+// src/modules/sslcommerz/payment.controller.ts
+var PaymentController = class {
+  static async createPayment(req, res) {
+    try {
+      await sslcommerzPayment.createPayment(req, res);
+    } catch (err) {
+      res.status(500).json({
+        message: err.message || "Payment initiation failed"
+      });
+    }
+  }
+  // ✅ FIXED SUCCESS
+  static async paymentSuccess(req, res) {
+    try {
+      const { tran_id, eventId, userId } = req.query;
+      if (!tran_id || !eventId || !userId) {
+        return res.status(400).send("Missing parameters");
+      }
+      console.log("Payment success:", tran_id);
+      await eventService.joinEvent(eventId, userId);
+      return res.redirect(
+        `http://localhost:3000/dashboard?payment=success`
+      );
+    } catch (err) {
+      console.error(err);
+      return res.redirect(
+        `http://localhost:3000/dashboard?payment=error`
+      );
+    }
+  }
+  static paymentFail(req, res) {
+    const { tran_id } = req.query;
+    console.log("Payment failed:", tran_id);
+    return res.redirect(
+      `http://localhost:3000/dashboard?payment=failed`
+    );
+  }
+  static paymentCancel(req, res) {
+    const { tran_id } = req.query;
+    console.log("Payment cancelled:", tran_id);
+    return res.redirect(
+      `http://localhost:3000/dashboard?payment=cancelled`
+    );
+  }
+};
+
+// src/modules/sslcommerz/payment.route.ts
+var router8 = express8.Router();
+router8.post("/sslcommerz", PaymentController.createPayment);
+router8.get("/success", auth_default("USER" /* USER */), PaymentController.paymentSuccess);
+router8.get("/fail", auth_default("USER" /* USER */), PaymentController.paymentFail);
+router8.get("/cancel", auth_default("USER" /* USER */), PaymentController.paymentCancel);
+var paymentRouter = router8;
+
 // src/app.ts
-var app = express7();
+var app = express9();
 app.use(cors({
-  origin: process.env.APP_URL || "https://skillbridge-client-flame.vercel.app",
+  origin: process.env.APP_URL || "http://localhost:3000",
   credentials: true
 }));
-app.use(express7.json());
+app.use(express9.json());
 app.all("/api/auth/*splat", toNodeHandler(auth));
 app.use("/api/auth", authRouter);
 app.use("/api/tutors", tutorRouter);
 app.use("/api/admin", categoryRouter);
-app.use("/api/bookings", bookingRouter);
+app.use("/api/events", bookingRouter);
+app.use("/api/invitations", invitationRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/payments", paymentRouter);
 app.get("/", (req, res) => {
-  res.send("SkillBridge is Running!");
+  res.send("Planora is Running!");
 });
 app.use(notFound);
 app.use(globalErrorHandling_default);
