@@ -695,11 +695,11 @@ var reviewController = {
 
 // src/modules/review/review.routes.ts
 var router2 = express2.Router();
-router2.post("/", auth_default("USER" /* USER */), reviewController.createReview);
-router2.get("/tutor/:tutorId", auth_default("USER" /* USER */), reviewController.getReviewsByTutor);
-router2.get("/:id", auth_default("USER" /* USER */), reviewController.getReviewById);
-router2.patch("/:id", auth_default("USER" /* USER */), reviewController.updateReview);
-router2.delete("/:id", auth_default("USER" /* USER */), reviewController.deleteReview);
+router2.post("/", auth_default("USER" /* USER */, "ADMIN" /* ADMIN */), reviewController.createReview);
+router2.get("/tutor/:tutorId", auth_default("USER" /* USER */, "ADMIN" /* ADMIN */), reviewController.getReviewsByTutor);
+router2.get("/:id", auth_default("USER" /* USER */, "ADMIN" /* ADMIN */), reviewController.getReviewById);
+router2.patch("/:id", auth_default("USER" /* USER */, "ADMIN" /* ADMIN */), reviewController.updateReview);
+router2.delete("/:id", auth_default("USER" /* USER */, "ADMIN" /* ADMIN */), reviewController.deleteReview);
 var reviewRouter = router2;
 
 // src/modules/events/events.routes.ts
@@ -923,14 +923,14 @@ var eventController = {
 
 // src/modules/events/events.routes.ts
 var router3 = express3.Router();
-router3.get("/", auth_default("USER" /* USER */), eventController.getMyEvents);
-router3.get("/:id", auth_default("USER" /* USER */), eventController.getEventDetails);
+router3.get("/", auth_default("USER" /* USER */, "ADMIN" /* ADMIN */), eventController.getMyEvents);
+router3.get("/:id", auth_default("USER" /* USER */, "ADMIN" /* ADMIN */), eventController.getEventDetails);
 router3.get("/", auth_default("USER" /* USER */), eventController.getAllEvents);
-router3.post("/", auth_default("USER" /* USER */), eventController.createEvent);
-router3.post("/:id/join", auth_default("USER" /* USER */), eventController.joinEvent);
-router3.post("/:id/request", auth_default("USER" /* USER */), eventController.requestEvent);
-router3.put("/:id", auth_default("USER" /* USER */), eventController.updateEvent);
-router3.delete("/:id", auth_default("USER" /* USER */), eventController.deleteEvent);
+router3.post("/", auth_default("USER" /* USER */, "ADMIN" /* ADMIN */), eventController.createEvent);
+router3.post("/:id/join", auth_default("USER" /* USER */, "ADMIN" /* ADMIN */), eventController.joinEvent);
+router3.post("/:id/request", auth_default("USER" /* USER */, "ADMIN" /* ADMIN */), eventController.requestEvent);
+router3.put("/:id", auth_default("USER" /* USER */, "ADMIN" /* ADMIN */), eventController.updateEvent);
+router3.delete("/:id", auth_default("USER" /* USER */, "ADMIN" /* ADMIN */), eventController.deleteEvent);
 var bookingRouter = router3;
 
 // src/modules/invitations/invitation.route.ts
@@ -1057,7 +1057,7 @@ var invitationRouter = router4;
 // src/modules/category/category.routes.ts
 import express5 from "express";
 var router5 = express5.Router();
-router5.get("/categories", auth_default("USER" /* USER */), async (req, res) => {
+router5.get("/categories", auth_default("USER" /* USER */, "ADMIN" /* ADMIN */), async (req, res) => {
   const categories = await prisma.category.findMany();
   res.json({
     success: true,
@@ -1566,9 +1566,9 @@ var PaymentController = class {
 // src/modules/sslcommerz/payment.route.ts
 var router8 = express8.Router();
 router8.post("/sslcommerz", PaymentController.createPayment);
-router8.get("/success", auth_default("USER" /* USER */), PaymentController.paymentSuccess);
-router8.get("/fail", auth_default("USER" /* USER */), PaymentController.paymentFail);
-router8.get("/cancel", auth_default("USER" /* USER */), PaymentController.paymentCancel);
+router8.get("/success", auth_default("USER" /* USER */, "ADMIN" /* ADMIN */), PaymentController.paymentSuccess);
+router8.get("/fail", auth_default("USER" /* USER */, "ADMIN" /* ADMIN */), PaymentController.paymentFail);
+router8.get("/cancel", auth_default("USER" /* USER */, "ADMIN" /* ADMIN */), PaymentController.paymentCancel);
 var paymentRouter = router8;
 
 // src/app.ts

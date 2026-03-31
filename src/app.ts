@@ -21,15 +21,15 @@ import { paymentRouter } from './modules/sslcommerz/payment.route';
 
 const app: Application = express();
 
-app.use(cors({
-    origin: process.env.APP_URL || "http://localhost:3000",
-    credentials: true
-}))
-
 // app.use(cors({
-//     origin: process.env.APP_URL || "https://skillbridge-client-flame.vercel.app",
+//     origin: process.env.APP_URL || "http://localhost:3000",
 //     credentials: true
 // }))
+
+app.use(cors({
+    origin: process.env.APP_URL || "https://planora-client.vercel.app",
+    credentials: true
+}))
 
 app.use(express.json());
 
