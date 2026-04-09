@@ -1574,7 +1574,7 @@ var paymentRouter = router8;
 // src/app.ts
 var app = express9();
 app.use(cors({
-  origin: process.env.APP_URL || "http://localhost:3000",
+  origin: process.env.APP_URL || "https://planora-client.vercel.app",
   credentials: true
 }));
 app.use(express9.json());

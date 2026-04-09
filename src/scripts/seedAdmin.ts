@@ -24,11 +24,11 @@ async function seedAdmin() {
             throw new Error("User already exits!!");
         }
 
-        const signUpAdmin = await fetch("http://localhost:5000/api/auth/sign-up/email", {
+        const signUpAdmin = await fetch("https://planora-server-eta.vercel.app/api/auth/sign-up/email", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Origin": "http://localhost:3000",
+                "Origin": "https://planora-client.vercel.app",
             },
             body: JSON.stringify(adminData)
         })
